@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>Classifier.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Classifier.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<span class="s0">from </span><span class="s1">operator </span><span class="s0">import </span><span class="s1">itemgetter</span>
+
+
+<span class="s0">class </span><span class="s1">KNearestNeighbours:</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">data</span><span class="s0">, </span><span class="s1">target</span><span class="s0">, </span><span class="s1">test_point</span><span class="s0">, </span><span class="s1">k):</span>
+        <span class="s1">self.data = data</span>
+        <span class="s1">self.target = target</span>
+        <span class="s1">self.test_point = test_point</span>
+        <span class="s1">self.k = k</span>
+        <span class="s1">self.distances = list()</span>
+        <span class="s1">self.categories = list()</span>
+        <span class="s1">self.indices = list()</span>
+        <span class="s1">self.counts = list()</span>
+        <span class="s1">self.category_assigned = </span><span class="s0">None</span>
+
+    <span class="s1">@staticmethod</span>
+    <span class="s0">def </span><span class="s1">dist(p1</span><span class="s0">, </span><span class="s1">p2):</span>
+        <span class="s2">&quot;&quot;&quot;Method returns the euclidean distance between two points&quot;&quot;&quot;</span>
+        <span class="s0">return </span><span class="s1">np.linalg.norm(np.array(p1) - np.array(p2))</span>
+
+    <span class="s0">def </span><span class="s1">fit(self):</span>
+        <span class="s2">&quot;&quot;&quot;Method that performs the KNN classification&quot;&quot;&quot;</span>
+        <span class="s3"># Create a list of (distance, index) tuples from the test point to each point in the data</span>
+        <span class="s1">self.distances.extend([(self.dist(self.test_point</span><span class="s0">, </span><span class="s1">point)</span><span class="s0">, </span><span class="s1">i) </span><span class="s0">for </span><span class="s1">point</span><span class="s0">, </span><span class="s1">i </span><span class="s0">in </span><span class="s1">zip(self.data</span><span class="s0">, </span><span class="s1">[i </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(self.data))])])</span>
+        <span class="s3"># Sort the distances in ascending order</span>
+        <span class="s1">sorted_li = sorted(self.distances</span><span class="s0">, </span><span class="s1">key=itemgetter(</span><span class="s4">0</span><span class="s1">))</span>
+        <span class="s3"># Fetch the indices of the k nearest point from the data</span>
+        <span class="s1">self.indices.extend([index </span><span class="s0">for </span><span class="s1">(val</span><span class="s0">, </span><span class="s1">index) </span><span class="s0">in </span><span class="s1">sorted_li[:self.k]])</span>
+        <span class="s3"># Fetch the categories from the train data target</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">self.indices:</span>
+            <span class="s1">self.categories.append(self.target[i])</span>
+        <span class="s3"># Fetch the count for each category from the K nearest neighbours</span>
+        <span class="s1">self.counts.extend([(i</span><span class="s0">, </span><span class="s1">self.categories.count(i)) </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">set(self.categories)])</span>
+        <span class="s3"># Find the highest repeated category among the K nearest neighbours</span>
+        <span class="s1">self.category_assigned = sorted(self.counts</span><span class="s0">, </span><span class="s1">key=itemgetter(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">reverse=</span><span class="s0">True</span><span class="s1">)[</span><span class="s4">0</span><span class="s1">][</span><span class="s4">0</span><span class="s1">]</span></pre>
+</body>
+</html>

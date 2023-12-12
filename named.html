@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>named</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+named</font>
+</center></td></tr></table>
+<pre><span class="s0">import torch</span>
+<span class="s0">from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="s0">from transformers import DistilBertTokenizer, DistilBertForTokenClassification</span>
+<span class="s0">from transformers import pipeline</span>
+
+<span class="s0"># Load pre-trained DistilBERT tokenizer and model</span>
+<span class="s0">tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-cased')</span>
+<span class="s0">model = DistilBertForTokenClassification.from_pretrained('distilbert-base-cased', num_labels=9)  # Change num_labels based on your NER tags</span>
+
+<span class="s0"># Example sentence</span>
+<span class="s0">sentence = &quot;Apple Inc. is planning to open a new store in Paris.&quot;</span>
+
+<span class="s0"># Tokenize the sentence</span>
+<span class="s0">tokens = tokenizer.tokenize(tokenizer.decode(tokenizer.encode(sentence)))</span>
+
+<span class="s0"># Convert tokens to input IDs</span>
+<span class="s0">input_ids = tokenizer.encode(sentence, return_tensors='pt')</span>
+
+<span class="s0"># Make predictions</span>
+<span class="s0">with torch.no_grad():</span>
+    <span class="s0">outputs = model(input_ids)</span>
+
+<span class="s0"># Get the predicted labels</span>
+<span class="s0">predictions = torch.argmax(outputs.logits, dim=2)</span>
+
+<span class="s0"># Decode the predictions and print the result</span>
+<span class="s0">print([(token, tokenizer.decode(pred)) for token, pred in zip(tokens, predictions[0].tolist())])</span>
+
+</pre>
+</body>
+</html>
